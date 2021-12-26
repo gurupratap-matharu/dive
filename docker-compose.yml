@@ -1,0 +1,54 @@
+version: "3.7"
+
+services:
+  web:
+    build: .
+    command: gunicorn main.wsgi:application --workers 3 -b 0.0.0.0:8000 --log-level DEBUG
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/code
+    ports:
+      - "8000:8000"
+      - "4000:4000"
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - main
+
+  db:
+    image: postgres:13.2-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    restart: unless-stopped
+    networks:
+      - main
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: dev/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/dev/dev.conf:/etc/nginx/nginx.conf:ro
+      - ./backend/staticfiles:/usr/src/app/staticfiles
+      - ./backend/media:/usr/src/app/media
+    depends_on:
+      - web
+    networks:
+      - main
+
+networks:
+  main:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

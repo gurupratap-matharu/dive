@@ -1,0 +1,69 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block title %}Log Book{% endblock title %}
+
+{% block content %}
+
+<div class="card">
+    <h5 class="card-header">Recent Dives</h5>
+    {% if dive_list %}
+    <div class="table-responsive">
+        <table class="table align-items-center table-flush table-borderless table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">
+                        <i class="fa fa-calendar fa-lg" aria-hidden="true"></i>
+                        <span class="ml-2">Date</span>
+                    </th>
+                    <th scope="col">
+                        <i class="fa fa-location-arrow fa-lg" aria-hidden="true"></i>
+                        <span class="ml-2">Lat</span>
+                    </th>
+                    <th scope="col">
+                        <i class="fa fa-location-arrow fa-lg" aria-hidden="true"></i>
+                        <span class="ml-2">Lon</span>
+                    </th>
+                    <th scope="col">
+                        <i class="fa fa-low-vision fa-lg" aria-hidden="true"></i>
+                        <span class="ml-2">Visibility</span>
+                    </th>
+                    <th scope="col">
+                        <i class="fa fa-clock-o fa-lg" aria-hidden="true"></i>
+                        <span class="ml-2">Bottom Time</span>
+                    </th>
+                    <th scope="col">
+                        <i class="fa fa-user-o fa-lg" aria-hidden="true"></i>
+                        <span class="ml-2">Diver</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dive in dive_list %}
+                <tr>
+                    <th scope="row"><a href="{{ dive.get_absolute_url }}">{{ forloop.counter }}</a></th>
+                    <td><a href="{{ dive.get_absolute_url }}">{{ dive.date }}</a></td>
+                    <td><a href="{{ dive.get_absolute_url }}">{{ dive.lat }}</a></td>
+                    <td><a href="{{ dive.get_absolute_url }}">{{ dive.lon }}</a></td>
+                    <td><a href="{{ dive.get_absolute_url }}">{{ dive.visibility }}</a></td>
+                    <td><a href="{{ dive.get_absolute_url }}">{{ dive.bottom_time }}</a></td>
+                    <td><a href="{{ dive.get_absolute_url }}">{{ dive.created_by.get_full_name }}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="d-flex flex-column p-5">
+        <p class="lead text-center p-3">You do not have any dives registered yet!</p>
+        <a href="{% url 'dive_create' %}" class="btn btn-light text-center" data-toggle="tooltip" data-placement="top"
+            title="Log your dive">
+            <i class="fa fa-plus fa-lg" aria-hidden="true"></i>
+            Create
+        </a>
+
+    </div>
+    {% endif %}
+</div>
+{% include 'dive/_paginate.html' %}
+{% endblock content %}
